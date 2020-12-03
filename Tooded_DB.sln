@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30413.136
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tooded_DB", "Tooded_DB.csproj", "{71976E93-07C8-4F01-9F89-82441C700ABE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{71976E93-07C8-4F01-9F89-82441C700ABE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{71976E93-07C8-4F01-9F89-82441C700ABE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{71976E93-07C8-4F01-9F89-82441C700ABE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{71976E93-07C8-4F01-9F89-82441C700ABE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {48356BFB-7BBE-46F7-B243-7C61D8AF7B76}
+	EndGlobalSection
+EndGlobal
