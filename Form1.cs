@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,28 +31,33 @@ namespace Tooded_DB
             adapter = new SqlDataAdapter("SELECT * FROM Toodetable", connect);
             adapter.Fill(tabel);
             dataGridView1.DataSource = tabel;
+            pictureBox1.Image = Image.FromFile("../../Images/list.png");
             connect.Close();
         }
         private void ClearData()
         {
-            Id = 0;
+            //Id = 0;
             Toodetxt.Text = "";
             Kogustxt.Text = "";
             Hindtxt.Text = "";
+            //save.FileName = "";
+            pictureBox1.Image = Image.FromFile("../../Images/list.png");
         }
         
         
         private void btn_Insert_Click(object sender, EventArgs e)
         {
-            if (Toodetxt.Text != "" && Kogustxt.Text != "" && Hindtxt.Text != "")
+            if (Toodetxt.Text != "" && Kogustxt.Text != "" && Hindtxt.Text != "" && pictureBox1.Image != null)
             {
                 try
                 {
-                    command = new SqlCommand("INSERT INTO Toodetable(Toodenimetus,Kogus,Hind) VALUES(@toode,@kogus,@hind)", connect);
+                    command = new SqlCommand("INSERT INTO Toodetable(Toodenimetus,Kogus,Hind,Pilt) VALUES(@toode,@kogus,@hind,@pilt)", connect);
                     connect.Open();
                     command.Parameters.AddWithValue("@toode", Toodetxt.Text);
                     command.Parameters.AddWithValue("@kogus", Kogustxt.Text);
                     command.Parameters.AddWithValue("@hind", Hindtxt.Text);
+                    string file_pilt = Toodetxt.Text+".jpg";
+                    command.Parameters.AddWithValue("@pilt", file_pilt);
                     command.ExecuteNonQuery();
                     connect.Close();
                     DisplayData();
@@ -61,27 +67,28 @@ namespace Tooded_DB
                 catch (Exception)
                 {
 
-                    MessageBox.Show("Viga");
+                    MessageBox.Show("Viga lisamisega");
                 }
-
             }
             else
             {
                 MessageBox.Show("Viga else");
             }
         }
-
+        SaveFileDialog save;
         private void btn_Update_Click(object sender, EventArgs e)
         {
-            if (Toodetxt.Text != "" && Kogustxt.Text != "" && Hindtxt.Text != "")
+            
+            if (Toodetxt.Text != "" && Kogustxt.Text != "" && Hindtxt.Text != "" && pictureBox1.Image!=null)
             {
-                command = new SqlCommand("UPDATE Toodetable  SET +" +
-                    "Toodenimetus=@toode,Kogus=@kogus,Hind=@hind WHERE Id=@id", connect);
+                command = new SqlCommand("UPDATE Toodetable  SET Toodenimetus=@toode,Kogus=@kogus,Hind=@hind, Pilt=@pilt WHERE Id=@id", connect);
                 connect.Open();
                 command.Parameters.AddWithValue("@id", Id);
                 command.Parameters.AddWithValue("@toode", Toodetxt.Text);
                 command.Parameters.AddWithValue("@kogus", Kogustxt.Text);
-                command.Parameters.AddWithValue("@hind", Hindtxt.Text);
+                command.Parameters.AddWithValue("@hind", Hindtxt.Text.Replace(",","."));
+                string file_pilt = Toodetxt.Text + ".jpg";
+                command.Parameters.AddWithValue("@pilt", file_pilt);
                 command.ExecuteNonQuery();
                 connect.Close();
                 DisplayData();
@@ -100,6 +107,60 @@ namespace Tooded_DB
             Toodetxt.Text = dataGridView1.Rows[e.RowIndex].Cells[1].Value.ToString();
             Kogustxt.Text = dataGridView1.Rows[e.RowIndex].Cells[2].Value.ToString();
             Hindtxt.Text = dataGridView1.Rows[e.RowIndex].Cells[3].Value.ToString();
+            pictureBox1.Image=Image.FromFile(@"C:\Users\marina.oleinik\source\repos\Tooded_DB\Images\" + dataGridView1.Rows[e.RowIndex].Cells[4].Value.ToString());
+        }
+
+        private void btn_Delete_Click(object sender, EventArgs e)
+        {
+            if (Id!=0)
+            {
+                command = new SqlCommand("DELETE Toodetable WHERE Id=@id", connect);
+                connect.Open();
+                command.Parameters.AddWithValue("@id", Id);
+                command.ExecuteNonQuery();
+                connect.Close();
+                DisplayData();
+                ClearData();
+                MessageBox.Show("Andmed on kustutatud");
+            }
+            else
+            {
+                MessageBox.Show("Viga kustutamisega");
+            }
+        }
+        
+        private void btn_LisaPilt_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog open = new OpenFileDialog();
+            open.Filter = "Image Files(*.jpeg;*.bmp;*.png;*.jpg)|*.jpeg;*.bmp;*.png;*.jpg";
+            open.InitialDirectory = Path.GetFullPath(@"C:\Users\marina.oleinik\Pictures");
+            if (open.ShowDialog()==DialogResult.OK)
+            {
+                save = new SaveFileDialog();
+                save.FileName = Toodetxt.Text+".jpg";
+                save.Filter = "Image Files(*.jpeg;*.bmp;*.png;*.jpg)|*.jpeg;*.bmp;*.png;*.jpg";
+                save.InitialDirectory = Path.GetFullPath(@"C:\Users\marina.oleinik\source\repos\Tooded_DB\Images");
+              
+                if (save.ShowDialog()==DialogResult.OK)
+                {
+                    File.Copy(open.FileName, save.FileName);                   
+                    save.RestoreDirectory = true;
+                    pictureBox1.Image = Image.FromFile(save.FileName);
+                } 
+
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            connect.Open();
+            for (int i = 0; i < dataGridView1.Rows.Count - 1; i++)
+            {
+                string Strquery = @"INSERT INTO Toodetable(Id,Toodenimetus,Kogus,Hind,Pilt) VALUES (dataGridView1.Rows[i].Cells[1].Value)";
+                command.CommandText = Strquery;
+                command.ExecuteNonQuery();
+            }
+            connect.Close();
         }
     }
 }
