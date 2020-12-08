@@ -143,20 +143,28 @@ namespace Tooded_DB
               
                 if (save.ShowDialog()==DialogResult.OK)
                 {
-                    File.Copy(open.FileName, save.FileName);                   
+                    File.Copy(open.FileName, save.FileName); 
+                    
                     save.RestoreDirectory = true;
                     pictureBox1.Image = Image.FromFile(save.FileName);
+                   
                 } 
 
             }
         }
-
+        string Strquery;
+        string text="";
         private void button1_Click(object sender, EventArgs e)
         {
             connect.Open();
             for (int i = 0; i < dataGridView1.Rows.Count - 1; i++)
             {
-                string Strquery = @"INSERT INTO Toodetable(Id,Toodenimetus,Kogus,Hind,Pilt) VALUES (dataGridView1.Rows[i].Cells[1].Value)";
+                for (int j = 0; j < dataGridView1.Columns.Count-1; j++)
+                {
+                    text+=(dataGridView1.Rows[i].Cells[j].Value).ToString();
+                }
+                Strquery = @"INSERT INTO Toodetable(Id,Toodenimetus,Kogus,Hind,Pilt) " +
+                    "VALUES (" + text + ")";
                 command.CommandText = Strquery;
                 command.ExecuteNonQuery();
             }
